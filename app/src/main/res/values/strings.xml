@@ -3,7 +3,7 @@
 
 	 <!-- TODO: Remove or change this placeholder text -->
 	 <string name="hello_blank_fragment">Hello blank fragment</string>
-	 <string name="mango_fruit">Mango Fruit</string>
+	 <string name="mango_fruit">Mango Company</string>
 	 <string name="contact_us">Contact US</string>
 	 <string name="info_item">Info Item</string>
 	 <string name="description">Description</string>
@@ -11,7 +11,7 @@
 	 <string name="alialfayed1_gmail_com">: alialfayed1@gmail.com</string>
 	 <string name="_10_st_cairo_egypt">: 10.St Cairo , Egypt</string>
 	 <string name="price">Price :</string>
-	 <string name="descriptiontext">Description :</string>
+	 <string name="descriptiontext">About :</string>
 	 <string name="_50">50 $</string>
-	 <string name="dec_text">A mango is a juicy stone fruit produced from numerous species of tropical trees belonging to the flowering plant genus Mangifera, cultivated mostly for their edible fruit. Most of these species are found in nature as wild mangoes. The genus belongs to the cashew family Anacardiaceae.</string>
+	 <string name="dec_text">Punto Fa, S.L., trading as Mango, is a Spanish clothing design and manufacturing company, founded in Barcelona, by brothers Isak Andic and Nahman Andic</string>
 </resources>
