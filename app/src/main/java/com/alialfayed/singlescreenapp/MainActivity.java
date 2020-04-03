@@ -1,22 +1,27 @@
 package com.alialfayed.singlescreenapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.TextView;
 
-import static com.alialfayed.singlescreenapp.ContactUsFragment.REQUEST_PHONE_CALL;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    static final int REQUEST_PHONE_CALL = 1;
+    static final String PHONE_NUMBER = "+201014775215";
 
-    public Button btnStepOne , btnStepTwo;
-    public FrameLayout container;
+    TextView txtPhone , txtEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,74 +29,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         // initialize variable
         init();
-        // initialize fragment
-        initFragment();
-    }
 
-    private void initFragment() {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.container,new InfoFragment());
-        fragmentTransaction.commit();
-    }
-    private void initContactUsFragment(){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.container,new ContactUsFragment());
-        fragmentTransaction.commit();
-    }
-    private void initInfoFragment(){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.container,new InfoFragment());
-        fragmentTransaction.commit();
     }
 
     private void init() {
-        btnStepOne  = findViewById(R.id.btnStepOne);
-        btnStepTwo  = findViewById(R.id.btnStepTwo);
-        container  = findViewById(R.id.container);
-
+        txtPhone = findViewById(R.id.txtPhone);
+        txtEmail = findViewById(R.id.txtEmail);
         // onclick Button
-        btnStepOne.setOnClickListener(this);
-        btnStepTwo.setOnClickListener(this);
+        txtPhone.setOnClickListener(this);
+        txtEmail.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.btnStepOne:
-                btnStepOne.setBackground(getDrawable(R.drawable.btn_shap));
-                btnStepTwo.setBackground(getDrawable(R.drawable.unselect_btn_shap));
-                btnStepOne.setTextColor(Color.WHITE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    btnStepTwo.setTextColor(getColor(R.color.orange));
-                }else {
-                    btnStepTwo.setTextColor(Color.YELLOW);
+            case R.id.txtPhone:
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+                } else {
+                    makeCall();
                 }
-                initInfoFragment();
                 break;
-            case  R.id.btnStepTwo:
-                btnStepOne.setBackground(getDrawable(R.drawable.unselect_btn_shap));
-                btnStepTwo.setBackground(getDrawable(R.drawable.btn_shap));
-                btnStepTwo.setTextColor(Color.WHITE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    btnStepOne.setTextColor(getColor(R.color.orange));
-                }else {
-                    btnStepOne.setTextColor(Color.YELLOW);
-                }
-                initContactUsFragment();
+            case  R.id.txtEmail:
+                sendMessage();
                 break;
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PHONE_CALL: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                }
-                return;
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_PHONE_CALL) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                makeCall();
             }
         }
     }
+
+    // Move Intent To Create Call
+    @SuppressLint("MissingPermission")
+    private void makeCall() {
+        try {
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse("tel:" +PHONE_NUMBER));//change the number
+            startActivity(callIntent);
+        } catch (ActivityNotFoundException activityException) {
+            Log.e("Calling a Phone Number", "Call failed", activityException);
+        }
+    }
+
+    // Move Intent To Send Message
+    private void sendMessage(){
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/html");
+        intent.putExtra(Intent.EXTRA_EMAIL, "alialfayed1@gmail.com");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Buy Mango");
+        intent.putExtra(Intent.EXTRA_TEXT, "I'm create order now ..");
+        startActivity(Intent.createChooser(intent, "Send Email"));
+    }
+
 }
